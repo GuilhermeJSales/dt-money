@@ -10,6 +10,8 @@ import {
   TransactionTypeButton,
 } from './styles'
 import { Controller, useForm } from 'react-hook-form'
+import { TransactionsContext } from '../../contexts/TransactionsContext'
+import { useContext } from 'react'
 
 const newTransactionFormSchema = z.object({
   description: z.string(),
@@ -21,7 +23,9 @@ const newTransactionFormSchema = z.object({
 type NewTransactionsFormInputs = z.infer<typeof newTransactionFormSchema>
 
 export function NewTransactionModal() {
+  const { createTransaction } = useContext(TransactionsContext)
   const {
+    reset,
     control,
     register,
     handleSubmit,
@@ -34,8 +38,14 @@ export function NewTransactionModal() {
   })
 
   async function handleCreateNewTransaction(data: NewTransactionsFormInputs) {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    console.log(data)
+    const { description, price, category, type } = data
+    await createTransaction({
+      description,
+      price,
+      category,
+      type,
+    })
+    reset()
   }
   return (
     <Dialog.Portal>
